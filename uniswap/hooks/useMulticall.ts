@@ -32,8 +32,9 @@ export function toCallKey(call: Call): string {
   return `${call.address}-${call.callData}`;
 }
 
-export default function useMulticall(calls, contractInterface, fragment, chainId) {
+export default function useMulticall(calls, contractInterface, fragment, chainId, raps) {
   const results = {}
+  console.log(raps)
 
   const callResults = useMemo(
     () =>

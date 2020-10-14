@@ -72,7 +72,6 @@ const findActionByType = type => {
 
 export const executeRap = async (wallet, updateRap, rap) => {
   const {actions} = rap;
-
   for (let index = 0; index < actions.length; index++) {
     const previousAction = index ? actions[index - 1] : defaultPreviousAction;
     const previousActionWasSuccess = get(
@@ -85,14 +84,18 @@ export const executeRap = async (wallet, updateRap, rap) => {
     const action = actions[index];
     const {parameters, type} = action;
     const actionPromise = findActionByType(type);
+
     try {
       const output = await actionPromise(wallet, rap, index, parameters, updateRap);
       const nextAction = index < actions.length - 1 ? actions[index + 1] : null;
+      console.log("execute", type)
 
       if (nextAction) {
         nextAction.parameters.override = output;
       }
     } catch (error) {
+      console.error("execute error", error)
+
       break;
     }
   }
@@ -140,7 +143,7 @@ export const estimateUnlockAndSwap = async ({
   return reduce(gasLimits, (acc, limit) => add(acc, limit), '0');
 };
 
-const createUnlockAndSwapRap = async ({
+export const createUnlockAndSwapRap = async ({
   callback,
   inputAmount,
   inputCurrency,
@@ -152,7 +155,6 @@ const createUnlockAndSwapRap = async ({
 }) => {
   // create unlock rap
   const {accountAddress} = settings;
-
   let actions = [];
 
   const swapAssetNeedsUnlocking = await assetNeedsUnlocking(
@@ -189,4 +191,3 @@ const createUnlockAndSwapRap = async ({
   return newRap;
 };
 
-export default createUnlockAndSwapRap;

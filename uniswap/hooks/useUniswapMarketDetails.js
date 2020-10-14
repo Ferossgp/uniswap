@@ -41,8 +41,6 @@ export default function useUniswapMarketDetails({
     chainId
   );
 
-  console.log(allPairs)
-
   const swapNotNeeded = useMemo(() => {
     return (
       (isDeposit || isWithdrawal) &&
@@ -50,7 +48,6 @@ export default function useUniswapMarketDetails({
     );
   }, [defaultInputAddress, inputCurrency, isDeposit, isWithdrawal]);
   const isMissingCurrency = !inputCurrency || !outputCurrency;
-
   const isMissingAmounts =
     (isEmpty(inputAmount) || isZero(inputAmount)) &&
     (isEmpty(outputAmount) || isZero(outputAmount));
@@ -60,7 +57,7 @@ export default function useUniswapMarketDetails({
     let updatedInputAsExactAmount = inputAsExactAmount;
 
     if (isMissingAmounts) {
-      const inputNativePrice = get(inputCurrency, 'native.price.amount', null);
+      const inputNativePrice = get(inputCurrency, 'native.price.amount', 10);
       updatedInputAmount = convertAmountFromNativeValue(
         DEFAULT_NATIVE_INPUT_AMOUNT,
         inputNativePrice,
@@ -78,6 +75,14 @@ export default function useUniswapMarketDetails({
       allPairs,
       updatedInputAsExactAmount
     );
+    
+    console.log("calculateTradeDetails",  chainId,
+    updatedInputAmount,
+    outputAmount,
+    inputCurrency,
+    outputCurrency,
+    allPairs,
+    updatedInputAsExactAmount)
 
     const hasInsufficientLiquidity =
       doneLoadingResults && (isEmpty(allPairs) || !newTradeDetails);
@@ -217,16 +222,19 @@ export default function useUniswapMarketDetails({
   ]);
 
   useEffect(() => {
+    console.log("sMissingCurrency, swapNotNeeded, updateTradeDetails", isMissingCurrency, swapNotNeeded, updateTradeDetails)
     if (swapNotNeeded || isMissingCurrency) return;
     updateTradeDetails();
   }, [isMissingCurrency, swapNotNeeded, updateTradeDetails]);
 
   useEffect(() => {
+    console.log("sMissingCurrency, swapNotNeeded, updateInputOutputAmounts")
     if (swapNotNeeded || isMissingCurrency) return;
     updateInputOutputAmounts();
   }, [isMissingCurrency, swapNotNeeded, updateInputOutputAmounts]);
 
   useEffect(() => {
+    console.log("needed")
     if (swapNotNeeded || isMissingCurrency) return;
     updateExtraTradeDetails({
       inputCurrency,
@@ -245,6 +253,8 @@ export default function useUniswapMarketDetails({
   ]);
 
   useEffect(() => {
+    console.log("update slippage")
+
     // update slippage
     if (swapNotNeeded || isMissingCurrency) return;
     if (isMissingAmounts) {

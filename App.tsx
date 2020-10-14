@@ -5,7 +5,7 @@
 import "@ethersproject/shims"
 
 import { ChainId } from '@uniswap/sdk';
-import {JsonRpcProvider} from "@ethersproject/providers"
+import { JsonRpcProvider } from "@ethersproject/providers"
 import React, { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Component } from 'react';
 import {
@@ -18,12 +18,15 @@ import {
   View,
   ActivityIndicator
 } from 'react-native';
+import useUniswapPairs from './uniswap/hooks/useUniswapPairs';
 import useSwapInputs from './uniswap/hooks/useSwapInputs'
 import useUniswapMarketDetails from './uniswap/hooks/useUniswapMarketDetails'
 import useSwapInputRefs from './uniswap/hooks/useSwapInputRefs'
-import {createUnlockAndSwapRap, executeRap} from './uniswap/raps'
-import {web3Provider} from './uniswap/web3'
+import { createUnlockAndSwapRap, executeRap } from './uniswap/raps'
+import { web3Provider } from './uniswap/web3'
 import { values } from "lodash-es";
+import {calculateTradeDetails} from './uniswap/handlers'
+import {updatePrecisionToDisplay,isZero,convertStringToNumber} from './uniswap/utilities'
 
 const Input = React.forwardRef((props, ref) => {
   return (
@@ -31,11 +34,11 @@ const Input = React.forwardRef((props, ref) => {
       <View style={{ paddingHorizontal: 16, paddingTop: 12 }}>
         <Text>{props.label}</Text>
       </View>
-      <View style={{flexDirection: "row", alignItems: "center", paddingHorizontal: 8,}}>
+      <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 8, }}>
         <TextInput placeholder="0.0" ref={ref} style={{ paddingHorizontal: 8, paddingVertical: 8, fontSize: 21, flex: 1 }} keyboardType="numeric" onChange={props.onChange} />
-        <View style={{flexDirection: "row", alignItems: "center"}}>
-          <Image source={{uri: props.token["logoURI"]}} style={{height: 24, width: 24}}/>
-          <Text style={{marginHorizontal: 8}}>{props.token["symbol"]}</Text>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <Image source={{ uri: props.token["logoURI"] }} style={{ height: 24, width: 24 }} />
+          <Text style={{ marginHorizontal: 8 }}>{props.token["symbol"]}</Text>
         </View>
       </View>
     </View>
@@ -45,11 +48,13 @@ const Input = React.forwardRef((props, ref) => {
 function Button(props) {
   return (
     <View style={{ borderWidth: 1, borderColor: 'rgb(247, 248, 250)', borderRadius: 16, backgroundColor: 'rgb(230, 0, 110)', marginVertical: 8 }}>
-      <TouchableOpacity style={{ paddingHorizontal: 16, paddingVertical: 8, alignItems: 'center' }} onPress={props.onPress}>
+      <TouchableOpacity
+        style={{ paddingHorizontal: 16, paddingVertical: 8, alignItems: 'center' }}
+        onPress={props.onPress}>
         {(props.isLoading) &&
           (<ActivityIndicator />)}
         {(!props.isLoading) &&
-         (<Text style={{ fontSize: 21, color: "white" }}>{props.label}</Text>)  }
+          (<Text style={{ fontSize: 21, color: "white" }}>{props.label}</Text>)}
       </TouchableOpacity>
     </View>
   )
@@ -105,21 +110,26 @@ export default function App(props) {
   });
   const [extraTradeDetails, updateExtraTradeDetails] = useState(null)
   const [raps, setRapRaw] = useState({})
-  const setRap = (id, value) => setRapRaw(Object.assign(raps, {[id]: value}))
-  const settings = {accountSettings: ""}
-  const wallet = {provider: web3Provider}
-
+  const setRap = (id, value) => setRapRaw(Object.assign(raps, { [id]: value }))
+  const settings = { accountSettings: "", accountAddress: "0xD63a6298503b4F0575E969331ACA857212AB4b46", chainId: ChainId.RINKEBY }
+  const wallet = { provider: web3Provider, chainId: ChainId.RINKEBY, }
+  const isDeposit = false;
+  const isWithdrawal = false;
+  const nativeCurrency = inputCurrency;
+  const maxInputBalance = 100;
+  const defaultInputAddress = inputCurrency.address
+  /*
   const { isSufficientLiquidity, tradeDetails } = useUniswapMarketDetails({
-    defaultInputAddress: null,
+    defaultInputAddress,
     extraTradeDetails,
     inputAmount,
     inputAsExactAmount,
     inputCurrency,
     inputFieldRef,
-    isDeposit: true,
-    isWithdrawal: false,
-    maxInputBalance: 100,
-    nativeCurrency: inputCurrency,
+    isDeposit,
+    isWithdrawal,
+    maxInputBalance,
+    nativeCurrency,
     outputAmount,
     outputCurrency,
     outputFieldRef,
@@ -128,20 +138,66 @@ export default function App(props) {
     updateExtraTradeDetails,
     updateInputAmount,
     updateOutputAmount,
-    chainId: ChainId.RINKEBY,
+    chainId: wallet.chainId,
   });
-  const handleSubmit = useCallback(async () => {
-    setIsAuthorizing(true);
+  */
+ const isSufficientLiquidity = true;
+ const { allPairs, doneLoadingResults } = useUniswapPairs(
+  inputCurrency,
+  outputCurrency,
+  wallet.chainId,
+  raps
+);
+ const tradeDetails = calculateTradeDetails(wallet.chainId,inputAmount,outputAmount,inputCurrency,outputCurrency, allPairs,true)
+ const calculateOutputGivenInputChange = useCallback(
+  ({ isInputEmpty, isInputZero }) => {
+    if (
+      (isInputEmpty || isInputZero) &&
+      outputFieldRef &&
+      outputFieldRef.current &&
+      !outputFieldRef.current.isFocused()
+    ) {
+      updateOutputAmount(null, null, true);
+    } else {
+      const rawUpdatedOutputAmount = tradeDetails?.outputAmount?.toExact();
+      if (!isZero(rawUpdatedOutputAmount)) {
+        const { outputPriceValue } = tradeDetails;
+        const updatedOutputAmountDisplay = updatePrecisionToDisplay(
+          rawUpdatedOutputAmount,
+          outputPriceValue
+        );
+
+        updateOutputAmount(
+          rawUpdatedOutputAmount,
+          updatedOutputAmountDisplay,
+          inputAsExactAmount
+        );
+      }
+    }
+  },
+  [
+    extraTradeDetails,
+    inputAsExactAmount,
+    outputFieldRef,
+    tradeDetails,
+    updateOutputAmount,
+  ]
+);
+  console.log("trade", tradeDetails)
+  const handleSubmit = useCallback(() => {
+    const fn = async () => {
+      setIsAuthorizing(true);
       try {
         if (!wallet) {
           setIsAuthorizing(false);
           return;
         }
+      console.log("WTF")
+
         const rap = await createUnlockAndSwapRap({
           callback: console.log,
-          inputAmount: inputAmount,
+          inputAmount,
           inputCurrency,
-          isMax,
           outputAmount,
           outputCurrency,
           selectedGasPrice: null,
@@ -153,8 +209,11 @@ export default function App(props) {
         await executeRap(wallet, setRap, rap);
         setIsAuthorizing(false);
       } catch (error) {
+        console.log(error)
         setIsAuthorizing(false);
       }
+    }
+    fn()
   }, [
     inputAmount,
     inputCurrency,
@@ -187,9 +246,9 @@ export default function App(props) {
             <Text>Logo</Text>
           </View>
           <View>
-            <Input label="From" ref={inputFieldRef} token={inputCurrency} value={inputAmount} onChange={updateInputAmount}/>
-            <Input label="To" ref={outputFieldRef} token={outputCurrency} value={outputAmount} onChange={updateOutputAmount}/>
-            <Button label="Swap" onPress={handleSubmit} isDisabled={!isSufficientLiquidity} isLoading={isAuthorizing}/>
+            <Input label="From" ref={inputFieldRef} token={inputCurrency} value={inputAmount} onChange={updateInputAmount} />
+            <Input label="To" ref={outputFieldRef} token={outputCurrency} value={outputAmount} onChange={updateOutputAmount} />
+            <Button label="Swap" onPress={handleSubmit} isDisabled={!isSufficientLiquidity} isLoading={isAuthorizing} />
           </View>
         </View>
       </View>

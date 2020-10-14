@@ -22,6 +22,7 @@ export default function useUniswapCalls(inputCurrency, outputCurrency, chainId) 
     const basebase = UNISWAP_V2_BASES[chainId as ChainId] ?? [];
     return basebase;
   }, [chainId]);
+  console.log("bases", bases)
   const allPairCombinations = useMemo(() => {
     if (!inputToken || !outputToken) return [];
     const combos = [
@@ -48,7 +49,6 @@ export default function useUniswapCalls(inputCurrency, outputCurrency, chainId) 
       ([inputToken, outputToken]) =>
         inputToken && outputToken && !inputToken.equals(outputToken)
     );
-
     const uniqCombos = uniqBy(validCombos, ([inputToken, outputToken]) =>
       toLower(Pair.getAddress(inputToken, outputToken))
     );

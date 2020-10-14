@@ -35,7 +35,7 @@ export default function useSwapInputs({
       newInputAsExactAmount = true,
       newIsMax = false
     ) => {
-      setInputAmount(newInputAmount);
+      setInputAmount(convertStringToNumber(newInputAmount));
       setInputAsExactAmount(newInputAsExactAmount);
       setInputAmountDisplay(newAmountDisplay || newInputAmount);
       setIsMax(!!newInputAmount && newIsMax);

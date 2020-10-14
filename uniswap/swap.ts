@@ -51,17 +51,12 @@ const swap = async (wallet, currentRap, index, parameters, updateRap) => {
     selectedGasPrice = null,
     tradeDetails,
   } = parameters;
-  const { dispatch } = store;
-  const { chainId } = store.getState().settings;
-  const { gasPrices } = store.getState().gas;
+  const { chainId } = wallet;
+  const gasPrice = wallet.provider.getGasPrice();
 
   // Execute Swap
-  let gasPrice = get(selectedGasPrice, 'value.amount');
 
   // if swap is not the final action, use fast gas
-  if (currentRap.actions.length - 1 > index || !gasPrice) {
-    gasPrice = get(gasPrices, `[fast].value.amount`);
-  }
   let gasLimit, methodName;
   try {
     const {
@@ -75,6 +70,8 @@ const swap = async (wallet, currentRap, index, parameters, updateRap) => {
     gasLimit = newGasLimit;
     methodName = newMethodName;
   } catch (e) {
+
+    console.log("estimateSwapGasLimit error", e)
     throw e;
   }
 
@@ -90,6 +87,7 @@ const swap = async (wallet, currentRap, index, parameters, updateRap) => {
       wallet,
     });
   } catch (e) {
+    console.log("Execute error", e)
     throw e;
   }
 
