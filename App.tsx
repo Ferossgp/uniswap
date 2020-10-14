@@ -1,0 +1,221 @@
+/**
+ * Sample React Native App
+ * https://github.com/facebook/react-native
+ */
+import "@ethersproject/shims"
+
+import { ChainId } from '@uniswap/sdk';
+import {JsonRpcProvider} from "@ethersproject/providers"
+import React, { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Component } from 'react';
+import {
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  View,
+  ActivityIndicator
+} from 'react-native';
+import useSwapInputs from './uniswap/hooks/useSwapInputs'
+import useUniswapMarketDetails from './uniswap/hooks/useUniswapMarketDetails'
+import useSwapInputRefs from './uniswap/hooks/useSwapInputRefs'
+import {createUnlockAndSwapRap, executeRap} from './uniswap/raps'
+import {web3Provider} from './uniswap/web3'
+import { values } from "lodash-es";
+
+const Input = React.forwardRef((props, ref) => {
+  return (
+    <View style={{ borderWidth: 1, borderColor: 'rgb(247, 248, 250)', borderRadius: 20, backgroundColor: 'white', marginVertical: 8 }}>
+      <View style={{ paddingHorizontal: 16, paddingTop: 12 }}>
+        <Text>{props.label}</Text>
+      </View>
+      <View style={{flexDirection: "row", alignItems: "center", paddingHorizontal: 8,}}>
+        <TextInput placeholder="0.0" ref={ref} style={{ paddingHorizontal: 8, paddingVertical: 8, fontSize: 21, flex: 1 }} keyboardType="numeric" onChange={props.onChange} />
+        <View style={{flexDirection: "row", alignItems: "center"}}>
+          <Image source={{uri: props.token["logoURI"]}} style={{height: 24, width: 24}}/>
+          <Text style={{marginHorizontal: 8}}>{props.token["symbol"]}</Text>
+        </View>
+      </View>
+    </View>
+  )
+})
+
+function Button(props) {
+  return (
+    <View style={{ borderWidth: 1, borderColor: 'rgb(247, 248, 250)', borderRadius: 16, backgroundColor: 'rgb(230, 0, 110)', marginVertical: 8 }}>
+      <TouchableOpacity style={{ paddingHorizontal: 16, paddingVertical: 8, alignItems: 'center' }} onPress={props.onPress}>
+        {(props.isLoading) &&
+          (<ActivityIndicator />)}
+        {(!props.isLoading) &&
+         (<Text style={{ fontSize: 21, color: "white" }}>{props.label}</Text>)  }
+      </TouchableOpacity>
+    </View>
+  )
+}
+
+type Props = {};
+export default function App(props) {
+
+  const inputCurrency = {
+    "name": "Ethereum",
+    "symbol": "ETH",
+    "decimals": 18,
+    "address": 'eth',
+    "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png"
+  }
+  const outputCurrency = {
+    "name": "Maker",
+    "symbol": "MKR",
+    "decimals": 18,
+    "address": "0x93bB63aFe1E0180d0eF100D774B473034fd60C36",
+    "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2/logo.png"
+  }
+
+  const {
+    inputFieldRef,
+    outputFieldRef,
+    nativeFieldRef
+  } = useSwapInputRefs({ inputCurrency, outputCurrency });
+  const [isAuthorizing, setIsAuthorizing] = useState(false);
+  const [slippage, setSlippage] = useState(null);
+  const {
+    inputAmount,
+    inputAmountDisplay,
+    inputAsExactAmount,
+    isMax,
+    isSufficientBalance,
+    nativeAmount,
+    outputAmount,
+    outputAmountDisplay,
+    setIsSufficientBalance,
+    updateInputAmount,
+    updateNativeAmount,
+    updateOutputAmount,
+  } = useSwapInputs({
+    defaultInputAsset: inputCurrency,
+    inputCurrency,
+    isDeposit: true,
+    isWithdrawal: false,
+    maxInputBalance: 100,
+    nativeFieldRef,
+    supplyBalanceUnderlying: 100,
+    type: '',
+  });
+  const [extraTradeDetails, updateExtraTradeDetails] = useState(null)
+  const [raps, setRapRaw] = useState({})
+  const setRap = (id, value) => setRapRaw(Object.assign(raps, {[id]: value}))
+  const settings = {accountSettings: ""}
+  const wallet = {provider: web3Provider}
+
+  const { isSufficientLiquidity, tradeDetails } = useUniswapMarketDetails({
+    defaultInputAddress: null,
+    extraTradeDetails,
+    inputAmount,
+    inputAsExactAmount,
+    inputCurrency,
+    inputFieldRef,
+    isDeposit: true,
+    isWithdrawal: false,
+    maxInputBalance: 100,
+    nativeCurrency: inputCurrency,
+    outputAmount,
+    outputCurrency,
+    outputFieldRef,
+    setIsSufficientBalance,
+    setSlippage,
+    updateExtraTradeDetails,
+    updateInputAmount,
+    updateOutputAmount,
+    chainId: ChainId.RINKEBY,
+  });
+  const handleSubmit = useCallback(async () => {
+    setIsAuthorizing(true);
+      try {
+        if (!wallet) {
+          setIsAuthorizing(false);
+          return;
+        }
+        const rap = await createUnlockAndSwapRap({
+          callback: console.log,
+          inputAmount: inputAmount,
+          inputCurrency,
+          isMax,
+          outputAmount,
+          outputCurrency,
+          selectedGasPrice: null,
+          tradeDetails,
+          settings,
+          setRap,
+        });
+        console.log(rap)
+        await executeRap(wallet, setRap, rap);
+        setIsAuthorizing(false);
+      } catch (error) {
+        setIsAuthorizing(false);
+      }
+  }, [
+    inputAmount,
+    inputCurrency,
+    isMax,
+    outputAmount,
+    outputCurrency,
+    slippage,
+    tradeDetails,
+  ]);
+  return (
+    <View style={{ flex: 1, paddingVertical: 40 }}>
+      <View style={styles.container}>
+        <View style={styles.welcome}>
+          <View>
+            <Text>Logo</Text>
+          </View>
+          <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+            <View>
+              <Text>Ether</Text>
+            </View>
+            <View>
+              <Text>Status Token</Text>
+            </View>
+          </View>
+        </View>
+      </View>
+      <View style={styles.container}>
+        <View style={styles.welcome}>
+          <View>
+            <Text>Logo</Text>
+          </View>
+          <View>
+            <Input label="From" ref={inputFieldRef} token={inputCurrency} value={inputAmount} onChange={updateInputAmount}/>
+            <Input label="To" ref={outputFieldRef} token={outputCurrency} value={outputAmount} onChange={updateOutputAmount}/>
+            <Button label="Swap" onPress={handleSubmit} isDisabled={!isSufficientLiquidity} isLoading={isAuthorizing}/>
+          </View>
+        </View>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
+    flexDirection: 'row'
+  },
+  welcome: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: 'rgba(255, 0, 122, 0.1)',
+    borderRadius: 24,
+  },
+  instructions: {
+    textAlign: 'center',
+    color: '#333333',
+    marginBottom: 5,
+  },
+});
