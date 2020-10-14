@@ -364,12 +364,10 @@ export const calculateTradeDetails = (
     );
 
     const amountIn = new TokenAmount(inputToken, inputRawAmount);
-    console.log(Object.values(pairs), Trade.bestTradeExactIn(Object.values(pairs), amountIn, outputToken, {
-      maxNumResults: 1,
-    }));
 
     return Trade.bestTradeExactIn(Object.values(pairs), amountIn, outputToken, {
-      maxNumResults: 1,
+      maxNumResults: 3,
+      maxHops: 3,
     })[0];
   } else {
     const outputRawAmount = convertAmountToRawAmount(

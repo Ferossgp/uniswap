@@ -64,18 +64,20 @@ type Props = {};
 export default function App(props) {
 
   const inputCurrency = {
-    "name": "Ethereum",
-    "symbol": "ETH",
+    "name": "Wrapped Ether",
+    "address": "0xc778417E063141139Fce010982780140Aa0cD5Ab",
+    "symbol": "WETH",
     "decimals": 18,
-    "address": 'eth',
-    "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png"
+    "chainId": 3,
+    "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xc778417E063141139Fce010982780140Aa0cD5Ab/logo.png"
   }
   const outputCurrency = {
-    "name": "Maker",
-    "symbol": "MKR",
-    "decimals": 18,
-    "address": "0x93bB63aFe1E0180d0eF100D774B473034fd60C36",
-    "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2/logo.png"
+      "name": "Dai Stablecoin",
+      "address": "0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735",
+      "symbol": "DAI",
+      "decimals": 18,
+      "chainId": 4,
+      "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735/logo.png"
   }
 
   const {
@@ -142,7 +144,7 @@ export default function App(props) {
   });
   */
  const isSufficientLiquidity = true;
- const { allPairs, doneLoadingResults } = useUniswapPairs(
+ const { allPairs } = useUniswapPairs(
   inputCurrency,
   outputCurrency,
   wallet.provider,
@@ -183,6 +185,7 @@ export default function App(props) {
     updateOutputAmount,
   ]
 );
+
   console.log("trade", tradeDetails)
   const handleSubmit = useCallback(() => {
     const fn = async () => {
@@ -192,7 +195,6 @@ export default function App(props) {
           setIsAuthorizing(false);
           return;
         }
-      console.log("WTF")
 
         const rap = await createUnlockAndSwapRap({
           callback: console.log,
