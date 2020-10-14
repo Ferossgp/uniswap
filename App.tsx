@@ -68,7 +68,7 @@ export default function App(props) {
     "address": "0xc778417E063141139Fce010982780140Aa0cD5Ab",
     "symbol": "WETH",
     "decimals": 18,
-    "chainId": 3,
+    "chainId": 4,
     "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xc778417E063141139Fce010982780140Aa0cD5Ab/logo.png"
   }
   const outputCurrency = {
@@ -150,7 +150,7 @@ export default function App(props) {
   wallet.provider,
   wallet.chainId
 );
- const tradeDetails = calculateTradeDetails(wallet.chainId,inputAmount,outputAmount,inputCurrency,outputCurrency, allPairs,true)
+ const tradeDetails = calculateTradeDetails(wallet.chainId,inputAmount,outputAmount,inputCurrency,outputCurrency, allPairs, false)
  const calculateOutputGivenInputChange = useCallback(
   ({ isInputEmpty, isInputZero }) => {
     if (

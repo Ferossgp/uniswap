@@ -346,7 +346,7 @@ export const calculateTradeDetails = (
   outputAmount: number,
   inputCurrency,
   outputCurrency,
-  pairs: Record<string, Pair>,
+  pairs,
   exactInput: boolean,
 ): Trade | null => {
 
@@ -364,8 +364,8 @@ export const calculateTradeDetails = (
     );
 
     const amountIn = new TokenAmount(inputToken, inputRawAmount);
-
-    return Trade.bestTradeExactIn(Object.values(pairs), amountIn, outputToken, {
+      console.log(inputToken, outputToken, inputRawAmount)
+    return Trade.bestTradeExactIn(pairs, amountIn, outputToken, {
       maxNumResults: 3,
       maxHops: 3,
     })[0];

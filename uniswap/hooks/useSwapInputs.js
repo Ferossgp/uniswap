@@ -118,7 +118,7 @@ export default function useSwapInputs({
   const updateOutputAmount = useCallback(
     (newOutputAmount, newAmountDisplay, newInputAsExactAmount = false) => {
       setInputAsExactAmount(newInputAsExactAmount);
-      setOutputAmount(newOutputAmount);
+      setOutputAmount(convertStringToNumber(newOutputAmount));
       setOutputAmountDisplay(newAmountDisplay || newOutputAmount);
     },
     [defaultInputAsset, isDeposit, isWithdrawal, type]
