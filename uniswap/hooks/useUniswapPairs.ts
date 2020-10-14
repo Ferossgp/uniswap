@@ -1,6 +1,7 @@
-import { Pair, TokenAmount } from '@uniswap/sdk';
+import { Provider } from '@ethersproject/providers';
+import { Pair, TokenAmount, Fetcher } from '@uniswap/sdk';
 import { compact } from 'lodash';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   PAIR_GET_RESERVES_FRAGMENT,
   PAIR_INTERFACE,
@@ -8,36 +9,27 @@ import {
 import useMulticall from './useMulticall';
 import useUniswapCalls from './useUniswapCalls';
 
-export default function useUniswapPairs(inputCurrency, outputCurrency, chainId, raps) {
+export default function useUniswapPairs(inputCurrency, outputCurrency, provider, chainId) {
   const { allPairCombinations, calls } = useUniswapCalls(
     inputCurrency,
     outputCurrency,
     chainId
   );
+  
+  const [allPairs, setAllPairs] = useState([])
 
-
-  const { allPairs, doneLoadingResults } = useMemo(() => {
-    let doneLoadingResults = true;
-    const viablePairs = allPairCombinations.map((result, i) => {
-      const tokenA = allPairCombinations[i][0];
-      const tokenB = allPairCombinations[i][1];
-
-      const [token0, token1] = tokenA.sortsBefore(tokenB)
-        ? [tokenA, tokenB]
-        : [tokenB, tokenA];
-      return new Pair(
-        new TokenAmount(token0, '0'),
-        new TokenAmount(token1, '0')
-      );
-    });
-    return {
-      allPairs: compact(viablePairs),
-      doneLoadingResults,
-    };
-  }, [allPairCombinations]);
+  useEffect(() => {
+    for (let i=0;i<allPairCombinations.length;i++){
+    const tokenA = allPairCombinations[i][0];
+    const tokenB = allPairCombinations[i][1];
+    Fetcher.fetchPairData(tokenA, tokenB, provider).then(p => {
+      console.log(p)
+      setAllPairs([...allPairs, p])
+    }).catch(e => console.error(e))
+  }
+  }, [allPairCombinations, setAllPairs])
 
   return {
     allPairs,
-    doneLoadingResults,
   };
 }

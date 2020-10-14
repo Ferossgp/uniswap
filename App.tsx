@@ -145,8 +145,8 @@ export default function App(props) {
  const { allPairs, doneLoadingResults } = useUniswapPairs(
   inputCurrency,
   outputCurrency,
-  wallet.chainId,
-  raps
+  wallet.provider,
+  wallet.chainId
 );
  const tradeDetails = calculateTradeDetails(wallet.chainId,inputAmount,outputAmount,inputCurrency,outputCurrency, allPairs,true)
  const calculateOutputGivenInputChange = useCallback(
