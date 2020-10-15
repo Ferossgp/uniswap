@@ -6,11 +6,10 @@ var App_1 = require("./App");
 var web3_1 = require("./uniswap/web3");
 var providers_1 = require("@ethersproject/providers");
 var statusAPI;
-var account;
 function Init(api) {
     statusAPI = api;
     statusAPI.ethereum.request({ method: "eth_requestAccounts" }).then(function (res) {
-        account = res[0];
+        setAccount(res[0]);
     });
     web3_1.setWeb3Provider(providers_1.Web3Provider(statusAPI.ethereum));
 }
@@ -42,7 +41,7 @@ function WidgetView(props) {
     </react_native_1.View>);
 }
 function ExtensionView(props) {
-    return (<App_1.default account={account}/>);
+    return (<App_1.default />);
 }
 exports["default"] = [{
         type: "WALLET_MAIN_SCREEN_WINDOW",

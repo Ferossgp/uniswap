@@ -5,7 +5,6 @@
 import "@ethersproject/shims"
 
 import { ChainId } from '@uniswap/sdk';
-import { JsonRpcProvider } from "@ethersproject/providers"
 import React, { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Component } from 'react';
 import {
@@ -23,7 +22,7 @@ import useSwapInputs from './uniswap/hooks/useSwapInputs'
 import useUniswapMarketDetails from './uniswap/hooks/useUniswapMarketDetails'
 import useSwapInputRefs from './uniswap/hooks/useSwapInputRefs'
 import { createUnlockAndSwapRap, executeRap } from './uniswap/raps'
-import { web3Provider } from './uniswap/web3'
+import { wallet } from './uniswap/web3'
 import { values } from "lodash-es";
 import { calculateTradeDetails } from './uniswap/handlers'
 import { updatePrecisionToDisplay, isZero, convertStringToNumber } from './uniswap/utilities'
@@ -113,8 +112,6 @@ export default function App(props) {
   const [extraTradeDetails, updateExtraTradeDetails] = useState(null)
   const [raps, setRapRaw] = useState({})
   const setRap = (id, value) => setRapRaw(Object.assign(raps, { [id]: value }))
-  const settings = { accountSettings: "", accountAddress: "0xD63a6298503b4F0575E969331ACA857212AB4b46", chainId: ChainId.RINKEBY }
-  const wallet = { provider: web3Provider, chainId: ChainId.RINKEBY, }
   const isDeposit = false;
   const isWithdrawal = false;
   const nativeCurrency = inputCurrency;
@@ -208,7 +205,7 @@ export default function App(props) {
           outputCurrency,
           selectedGasPrice: null,
           tradeDetails,
-          settings,
+          wallet,
           setRap,
         });
 
