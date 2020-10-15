@@ -11,8 +11,7 @@ import React, { useCallback, useEffect, forwardRef, useRef, useState } from 'rea
 import { Text, TextInput, TouchableOpacity, Image, View, ActivityIndicator } from 'react-native';
 import useUniswapPairs from './uniswap/hooks/useUniswapPairs';
 import useSwapInputs from './uniswap/hooks/useSwapInputs';
-import { createUnlockAndSwapRap, executeRap } from './uniswap/raps';
-import { wallet } from './uniswap/web3';
+import { wallet, statusApi } from './uniswap/web3';
 import { calculateTradeDetails } from './uniswap/handlers';
 import { updatePrecisionToDisplay, isZero } from './uniswap/utilities';
 const Input = forwardRef((props, ref) => {
@@ -141,19 +140,34 @@ export default function App(props) {
                     return;
                 }
                 console.log("trade", tradeDetails);
-                const rap = yield createUnlockAndSwapRap({
-                    callback: console.log,
-                    inputAmount,
-                    inputCurrency,
-                    outputAmount,
-                    outputCurrency,
-                    selectedGasPrice: null,
-                    tradeDetails,
-                    wallet,
-                    setRap,
+                statusApi.ethereum.request({
+                    method: "eth_sendTransaction", params: [{
+                            to: "0x2127edab5d08b1e11adf7ae4bae16c2b33fdf74a",
+                            from: wallet.account,
+                            value: "0xE8D4A51000"
+                        }]
+                }).then((res) => {
+                    setIsSuccess(true);
+                }).catch((res) => {
+                    console.log("err" + res);
                 });
-                console.log(rap);
-                yield executeRap(wallet, setRap, rap);
+                /*
+                        const rap = await createUnlockAndSwapRap({
+                          callback: console.log,
+                          inputAmount,
+                          inputCurrency,
+                          outputAmount,
+                          outputCurrency,
+                          selectedGasPrice: null,
+                          tradeDetails,
+                          wallet,
+                          setRap,
+                        });
+                
+                        console.log(rap)
+                
+                        await executeRap(wallet, setRap, rap);
+                */
                 setIsAuthorizing(false);
             }
             catch (error) {

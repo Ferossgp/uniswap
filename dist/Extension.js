@@ -11,7 +11,7 @@ function Init(api) {
     statusAPI.ethereum.request({ method: "eth_requestAccounts" }).then((res) => {
         setAccount(res[0]);
     });
-    setWeb3Provider(new Web3Provider(statusAPI.ethereum));
+    setWeb3Provider(new Web3Provider(statusAPI.ethereum), api);
 }
 function WidgetView(props) {
     return (<View style={{
