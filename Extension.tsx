@@ -13,9 +13,13 @@ import { Web3Provider } from '@ethersproject/providers';
 type Props = {};
 
 let statusAPI;
+let account;
 
 function Init(api) {
   statusAPI = api;
+  statusAPI.ethereum.request({method: "eth_requestAccounts"}).then((res) => {
+    account = res[0]
+  });
   setWeb3Provider(Web3Provider(statusAPI.ethereum))
 }
 
@@ -51,9 +55,7 @@ function WidgetView(props: Props){
 
 function ExtensionView(props: Props){
     return (
-        <View>
-          <App />
-        </View>
+          <App account={account}/>
     )
 }
 

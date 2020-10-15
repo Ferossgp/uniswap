@@ -35,7 +35,7 @@ const Input = React.forwardRef((props, ref) => {
         <Text>{props.label}</Text>
       </View>
       <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 8, }}>
-        <TextInput placeholder="0.0" ref={ref} style={{ paddingHorizontal: 8, paddingVertical: 8, fontSize: 21, flex: 1 }} keyboardType="numeric" onChange={props.onChange} />
+        <TextInput placeholder="0.0" ref={ref} style={{ paddingHorizontal: 8, paddingVertical: 8, fontSize: 21, flex: 1 }} keyboardType="numeric" value={props.value} onChangeText={props.onChange} />
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Image source={{ uri: props.token["logoURI"] }} style={{ height: 24, width: 24 }} />
           <Text style={{ marginHorizontal: 8 }}>{props.token["symbol"]}</Text>
@@ -144,13 +144,15 @@ export default function App(props) {
   });
   */
   const isSufficientLiquidity = true;
+  
   const { allPairs } = useUniswapPairs(
     inputCurrency,
     outputCurrency,
     wallet.provider,
     wallet.chainId
   );
-  const tradeDetails = calculateTradeDetails(wallet.chainId, inputAmount, outputAmount, inputCurrency, outputCurrency, allPairs, false)
+
+  const tradeDetails = calculateTradeDetails(wallet.chainId, inputAmount, outputAmount, inputCurrency, outputCurrency, allPairs, true)
   const calculateOutputGivenInputChange = useCallback(
     ({ isInputEmpty, isInputZero }) => {
       if (
@@ -159,16 +161,16 @@ export default function App(props) {
         outputFieldRef.current &&
         !outputFieldRef.current.isFocused()
       ) {
+
         updateOutputAmount(null, null, true);
       } else {
         const rawUpdatedOutputAmount = tradeDetails?.outputAmount?.toExact();
         if (!isZero(rawUpdatedOutputAmount)) {
-          const { outputPriceValue } = tradeDetails;
+          const outputPriceValue = tradeDetails?.outputPriceValue;
           const updatedOutputAmountDisplay = updatePrecisionToDisplay(
             rawUpdatedOutputAmount,
             outputPriceValue
           );
-
           updateOutputAmount(
             rawUpdatedOutputAmount,
             updatedOutputAmountDisplay,
@@ -185,7 +187,9 @@ export default function App(props) {
       updateOutputAmount,
     ]
   );
-
+  useEffect(() => {
+    calculateOutputGivenInputChange({isInputEmpty: inputAmount == null, isInputZero: isZero(inputAmount)})
+  }, [inputAmount])
   const handleSubmit = useCallback(() => {
     const fn = async () => {
       setIsAuthorizing(true);
@@ -249,8 +253,8 @@ export default function App(props) {
             <Text style={{ fontSize: 18 }}>🦄 Uniswap</Text>
           </View>
           <View>
-            <Input label="From" ref={inputFieldRef} token={inputCurrency} value={inputAmount} onChange={updateInputAmount} />
-            <Input label="To" ref={outputFieldRef} token={outputCurrency} value={outputAmount} onChange={updateOutputAmount} />
+            <Input label="From" ref={inputFieldRef} token={inputCurrency} value={inputAmountDisplay} onChange={updateInputAmount} />
+            <Input label="To" ref={outputFieldRef} token={outputCurrency} value={outputAmountDisplay} onChange={updateOutputAmount} />
             <Button label="Swap" onPress={handleSubmit} isDisabled={!isSufficientLiquidity} isLoading={isAuthorizing} />
           </View>
         </View>

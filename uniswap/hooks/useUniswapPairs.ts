@@ -12,15 +12,15 @@ export default function useUniswapPairs(
   provider,
   chainId,
 ) {
-
   const [allPairs, setAllPairs] = useState([]);
+
   const {allPairCombinations} = useUniswapCalls(
     inputCurrency,
     outputCurrency,
     chainId,
   );
-  useEffect(() => {
 
+  useEffect(() => {
     for (let i = 0; i < allPairCombinations.length; i++) {
       const a = allPairCombinations[i][0];
       const b = allPairCombinations[i][1];
@@ -31,7 +31,7 @@ export default function useUniswapPairs(
         })
         .catch((e) => console.error('Fetch pairs', e));
     }
-  }, [inputCurrency,]);
+  }, [inputCurrency]);
 
   return {
     allPairs,

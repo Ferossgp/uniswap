@@ -16,6 +16,7 @@
     "@ethersproject/providers": "5.0.9",
     "@ethersproject/shims": "^5.0.6",
     "@ethersproject/solidity": "^5.0.5",
+    "@ethersproject/wallet": "^5.0.5",
     "@types/lodash-es": "^4.17.3",
     "@uniswap/sdk": "^3.0.3",
     "@uniswap/v2-core": "^1.0.1",
