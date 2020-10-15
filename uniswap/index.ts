@@ -4,7 +4,6 @@ import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.
 import { keyBy, map, mapKeys, toLower } from 'lodash';
 import MULTICALL_ABI from './uniswap-multicall-abi.json';
 import { default as UNISWAP_TESTNET_TOKEN_LIST } from './uniswap-pairs-testnet.json';
-import UNISWAP_TOKEN_LIST from './uniswap-token-list.json';
 import { abi as UNISWAP_V2_ROUTER_ABI } from './uniswap-v2-router.json';
 import UNISWAP_V1_EXCHANGE_ABI from './v1-exchange-abi';
 import tokenOverridesData from './token-overrides.json';
@@ -23,16 +22,7 @@ export const tokenOverrides = mapKeys(tokenOverridesData, (_, address) =>
   toLower(address)
 );
 
-const CURATED_UNISWAP_TOKEN_LIST = map(UNISWAP_TOKEN_LIST['tokens'], token => {
-  const address = toLower(token.address);
-  return {
-    ...token,
-    ...tokenOverrides[address],
-    address,
-  };
-});
 
-const CURATED_UNISWAP_TOKENS = keyBy(CURATED_UNISWAP_TOKEN_LIST, 'address');
 
 const UNISWAP_V2_ROUTER_ADDRESS = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
 
@@ -65,14 +55,12 @@ const MULTICALL_NETWORKS: { [chainId in ChainId]: string } = {
 };
 
 export {
-  CURATED_UNISWAP_TOKENS,
   MULTICALL_ABI,
   MULTICALL_NETWORKS,
   PAIR_GET_RESERVES_CALL_DATA,
   PAIR_GET_RESERVES_FRAGMENT,
   PAIR_INTERFACE,
   UNISWAP_TESTNET_TOKEN_LIST,
-  UNISWAP_TOKEN_LIST,
   UNISWAP_V1_EXCHANGE_ABI,
   UNISWAP_V2_BASES,
   UNISWAP_V2_ROUTER_ABI,

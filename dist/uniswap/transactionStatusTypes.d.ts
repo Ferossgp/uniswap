@@ -1,0 +1,20 @@
+declare const _default: {
+    approved: string;
+    approving: string;
+    deposited: string;
+    depositing: string;
+    failed: string;
+    purchased: string;
+    purchasing: string;
+    received: string;
+    receiving: string;
+    self: string;
+    sending: string;
+    sent: string;
+    swapped: string;
+    swapping: string;
+    unknown: string;
+    withdrawing: string;
+    withdrew: string;
+};
+export default _default;

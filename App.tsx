@@ -1,15 +1,5 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- */
-import "@ethersproject/shims"
-
-import { ChainId } from '@uniswap/sdk';
-import React, { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Component } from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useMemo, forwardRef, useRef, useState } from 'react'
 import {
-  Platform,
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
@@ -19,15 +9,13 @@ import {
 } from 'react-native';
 import useUniswapPairs from './uniswap/hooks/useUniswapPairs';
 import useSwapInputs from './uniswap/hooks/useSwapInputs'
-import useUniswapMarketDetails from './uniswap/hooks/useUniswapMarketDetails'
 import useSwapInputRefs from './uniswap/hooks/useSwapInputRefs'
 import { createUnlockAndSwapRap, executeRap } from './uniswap/raps'
 import { wallet } from './uniswap/web3'
-import { values } from "lodash-es";
 import { calculateTradeDetails } from './uniswap/handlers'
-import { updatePrecisionToDisplay, isZero, convertStringToNumber } from './uniswap/utilities'
+import { updatePrecisionToDisplay, isZero } from './uniswap/utilities'
 
-const Input = React.forwardRef((props, ref) => {
+const Input = forwardRef((props, ref) => {
   return (
     <View style={{ borderWidth: 1, borderColor: 'rgb(247, 248, 250)', borderRadius: 20, backgroundColor: 'white', marginVertical: 8 }}>
       <View style={{ paddingHorizontal: 16, paddingTop: 12 }}>
@@ -85,6 +73,8 @@ export default function App(props) {
     nativeFieldRef
   } = useSwapInputRefs({ inputCurrency, outputCurrency });
   const [isAuthorizing, setIsAuthorizing] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  
   const [slippage, setSlippage] = useState(null);
   const {
     inputAmount,
@@ -230,7 +220,6 @@ export default function App(props) {
   ]);
   return (
     <View style={{ flex: 1, paddingVertical: 40 }}>
-      
       <View style={{
         flex: 1,
         padding: 20,
@@ -250,6 +239,7 @@ export default function App(props) {
             <Text style={{ fontSize: 18 }}>🦄 Uniswap</Text>
           </View>
           <View>
+            {isSuccess &&  (<Text>Successfully swaped</Text> )}
             <Input label="From" ref={inputFieldRef} token={inputCurrency} value={inputAmountDisplay} onChange={updateInputAmount} />
             <Input label="To" ref={outputFieldRef} token={outputCurrency} value={outputAmountDisplay} onChange={updateOutputAmount} />
             <Button label="Swap" onPress={handleSubmit} isDisabled={!isSufficientLiquidity} isLoading={isAuthorizing} />

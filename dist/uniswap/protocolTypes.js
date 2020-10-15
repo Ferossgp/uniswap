@@ -1,84 +1,82 @@
-"use strict";
-exports.__esModule = true;
-exports["default"] = {
+export default {
     aave: {
         displayName: 'Aave',
-        name: 'aave'
+        name: 'aave',
     },
     bancor: {
         displayName: 'Bancor',
-        name: 'bancor'
+        name: 'bancor',
     },
     compound: {
         displayName: 'Compound',
-        name: 'compound'
+        name: 'compound',
     },
     curve: {
         displayName: 'Curve',
-        name: 'curve'
+        name: 'curve',
     },
     disperse_app: {
         displayName: 'Disperse',
-        name: 'disperse_app'
+        name: 'disperse_app',
     },
     dsr: {
         displayName: 'DSR',
-        name: 'dsr'
+        name: 'dsr',
     },
     dydx: {
         displayName: 'dYdX',
-        name: 'dydx'
+        name: 'dydx',
     },
     fulcrum: {
         displayName: 'Fulcrum',
-        name: 'fulcrum'
+        name: 'fulcrum',
     },
     iearn: {
         displayName: 'iEarn Finance',
-        name: 'iearn'
+        name: 'iearn',
     },
     kyber: {
         displayName: 'Kyber',
-        name: 'kyber'
+        name: 'kyber',
     },
     maker: {
         displayName: 'Maker',
-        name: 'maker'
+        name: 'maker',
     },
     maker_dss: {
         displayName: 'Maker',
-        name: 'maker_dss'
+        name: 'maker_dss',
     },
     one_inch: {
         displayName: '1inch',
-        name: 'one_inch'
+        name: 'one_inch',
     },
     pool_together: {
         displayName: 'Pool Together',
-        name: 'pool_together'
+        name: 'pool_together',
     },
     ray: {
         displayName: 'Ray',
-        name: 'ray'
+        name: 'ray',
     },
     set: {
         displayName: 'Set Protocol',
-        name: 'set'
+        name: 'set',
     },
     synthetix: {
         displayName: 'Synthetix',
-        name: 'synthetix'
+        name: 'synthetix',
     },
     uniswap: {
         displayName: 'Uniswap',
-        name: 'uniswap'
+        name: 'uniswap',
     },
     zrx_stacking: {
         displayName: '0x Staking',
-        name: 'zrx_stacking'
+        name: 'zrx_stacking',
     },
     zrx_staking: {
         displayName: '0x Staking',
-        name: 'zrx_staking'
-    }
+        name: 'zrx_staking',
+    },
 };

@@ -1,6 +1,4 @@
-"use strict";
-exports.__esModule = true;
-exports["default"] = {
+export default {
     approved: 'approved',
     approving: 'approving',
     deposited: 'deposited',
@@ -17,5 +15,5 @@ exports["default"] = {
     swapping: 'swapping',
     unknown: 'unknown status',
     withdrawing: 'withdrawing',
-    withdrew: 'withdrew'
+    withdrew: 'withdrew',
 };

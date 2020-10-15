@@ -1,6 +1,4 @@
-"use strict";
-exports.__esModule = true;
-exports["default"] = {
+export default {
     authorize: 'authorize',
     borrow: 'borrow',
     cancel: 'cancel',
@@ -12,5 +10,5 @@ exports["default"] = {
     repay: 'repay',
     send: 'send',
     trade: 'trade',
-    withdraw: 'withdraw'
+    withdraw: 'withdraw',
 };
