@@ -106,7 +106,7 @@ export const estimateUnlockAndSwap = async ({
   outputAmount,
   outputCurrency,
   tradeDetails,
-  settings,
+  wallet,
 }) => {
   if (!inputAmount) inputAmount = 1;
   if (!outputAmount) outputAmount = 1;
@@ -115,7 +115,7 @@ export const estimateUnlockAndSwap = async ({
 
   if (!isValid) return ethUnits.basic_swap;
 
-  const {accountAddress, chainId} = settings;
+  const {accountAddress, chainId} = wallet;
 
   let gasLimits = [];
   const swapAssetNeedsUnlocking = await assetNeedsUnlocking(
@@ -149,11 +149,11 @@ export const createUnlockAndSwapRap = async ({
   outputCurrency,
   selectedGasPrice,
   tradeDetails,
-  settings,
+  wallet,
   setRap,
 }) => {
   // create unlock rap
-  const {accountAddress} = settings;
+  const {accountAddress} = wallet;
   let actions = [];
 
   const swapAssetNeedsUnlocking = await assetNeedsUnlocking(

@@ -2,7 +2,7 @@
   "name": "UniswapStatus",
   "version": "0.0.1",
   "private": true,
-  "main": "extension.js",
+  "main": "Extension.js",
   "scripts": {
     "postinstall": "patch-package",
     "android": "react-native run-android",

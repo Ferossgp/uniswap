@@ -41,7 +41,6 @@ exports.__esModule = true;
  * https://github.com/facebook/react-native
  */
 require("@ethersproject/shims");
-var sdk_1 = require("@uniswap/sdk");
 var react_1 = require("react");
 var react_native_1 = require("react-native");
 var useUniswapPairs_1 = require("./uniswap/hooks/useUniswapPairs");
@@ -112,8 +111,6 @@ function App(props) {
         var _a;
         return setRapRaw(Object.assign(raps, (_a = {}, _a[id] = value, _a)));
     };
-    var settings = { accountSettings: "", accountAddress: "0xD63a6298503b4F0575E969331ACA857212AB4b46", chainId: sdk_1.ChainId.RINKEBY };
-    var wallet = { provider: web3_1.web3Provider, chainId: sdk_1.ChainId.RINKEBY };
     var isDeposit = false;
     var isWithdrawal = false;
     var nativeCurrency = inputCurrency;
@@ -143,8 +140,8 @@ function App(props) {
     });
     */
     var isSufficientLiquidity = true;
-    var allPairs = useUniswapPairs_1["default"](inputCurrency, outputCurrency, wallet.provider, wallet.chainId).allPairs;
-    var tradeDetails = handlers_1.calculateTradeDetails(wallet.chainId, inputAmount, outputAmount, inputCurrency, outputCurrency, allPairs, true);
+    var allPairs = useUniswapPairs_1["default"](inputCurrency, outputCurrency, web3_1.wallet.provider, web3_1.wallet.chainId).allPairs;
+    var tradeDetails = handlers_1.calculateTradeDetails(web3_1.wallet.chainId, inputAmount, outputAmount, inputCurrency, outputCurrency, allPairs, true);
     var calculateOutputGivenInputChange = react_1.useCallback(function (_a) {
         var _b;
         var isInputEmpty = _a.isInputEmpty, isInputZero = _a.isInputZero;
@@ -182,7 +179,7 @@ function App(props) {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 4, , 5]);
-                        if (!wallet) {
+                        if (!web3_1.wallet) {
                             setIsAuthorizing(false);
                             return [2 /*return*/];
                         }
@@ -195,13 +192,13 @@ function App(props) {
                                 outputCurrency: outputCurrency,
                                 selectedGasPrice: null,
                                 tradeDetails: tradeDetails,
-                                settings: settings,
+                                wallet: web3_1.wallet,
                                 setRap: setRap
                             })];
                     case 2:
                         rap = _a.sent();
                         console.log(rap);
-                        return [4 /*yield*/, raps_1.executeRap(wallet, setRap, rap)];
+                        return [4 /*yield*/, raps_1.executeRap(web3_1.wallet, setRap, rap)];
                     case 3:
                         _a.sent();
                         setIsAuthorizing(false);
