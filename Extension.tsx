@@ -7,8 +7,17 @@ import {
   View
 } from 'react-native';
 import App from './App'
+import {setWeb3Provider} from './uniswap/web3'
+import { Web3Provider } from '@ethersproject/providers';
 
 type Props = {};
+
+let statusAPI;
+
+function Init(api) {
+  statusAPI = api;
+  setWeb3Provider(Web3Provider(statusAPI.ethereum))
+}
 
 function WidgetView(props: Props){
   return (
@@ -49,6 +58,8 @@ function ExtensionView(props: Props){
 }
 
 export default [{
-  widget: WidgetView
-  view: ExtensionView
+  type: "WALLET_MAIN_SCREEN_WINDOW",
+  widget: WidgetView,
+  view: ExtensionView,
+  init: Init,
 }]
