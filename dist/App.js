@@ -7,11 +7,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import React, { useCallback, useEffect, forwardRef, useState } from 'react';
+import React, { useCallback, useEffect, forwardRef, useRef, useState } from 'react';
 import { Text, TextInput, TouchableOpacity, Image, View, ActivityIndicator } from 'react-native';
 import useUniswapPairs from './uniswap/hooks/useUniswapPairs';
 import useSwapInputs from './uniswap/hooks/useSwapInputs';
-import useSwapInputRefs from './uniswap/hooks/useSwapInputRefs';
 import { createUnlockAndSwapRap, executeRap } from './uniswap/raps';
 import { wallet } from './uniswap/web3';
 import { calculateTradeDetails } from './uniswap/handlers';
@@ -57,7 +56,9 @@ export default function App(props) {
         "chainId": 4,
         "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735/logo.png"
     };
-    const { inputFieldRef, outputFieldRef, nativeFieldRef } = useSwapInputRefs({ inputCurrency, outputCurrency });
+    const inputFieldRef = useRef();
+    const nativeFieldRef = useRef();
+    const outputFieldRef = useRef();
     const [isAuthorizing, setIsAuthorizing] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [slippage, setSlippage] = useState(null);

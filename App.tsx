@@ -67,11 +67,10 @@ export default function App(props) {
     "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735/logo.png"
   }
 
-  const {
-    inputFieldRef,
-    outputFieldRef,
-    nativeFieldRef
-  } = useSwapInputRefs({ inputCurrency, outputCurrency });
+  const inputFieldRef = useRef();
+  const nativeFieldRef = useRef();
+  const outputFieldRef = useRef();
+
   const [isAuthorizing, setIsAuthorizing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   
