@@ -1,6 +1,7 @@
 import {MaxUint256} from '@ethersproject/constants';
 import {Contract} from '@ethersproject/contracts';
 import {web3Provider} from './web3';
+import {erc20ABI} from './index'
 
 /**
  * @desc remove hex prefix

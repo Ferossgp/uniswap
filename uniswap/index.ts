@@ -9,6 +9,7 @@ import { abi as UNISWAP_V2_ROUTER_ABI } from './uniswap-v2-router.json';
 import UNISWAP_V1_EXCHANGE_ABI from './v1-exchange-abi';
 import tokenOverridesData from './token-overrides.json';
 export { default as ethUnits } from './ethereum-units.json';
+export { default as erc20ABI } from './erc20-abi.json';
 
 export const CDAI_CONTRACT = '0x5d3a536e4d6dbd6114cc1ead35777bab948e3643';
 export const SAI_ADDRESS = '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359';

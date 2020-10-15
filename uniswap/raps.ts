@@ -3,10 +3,9 @@ import { MaxUint256 } from '@ethersproject/constants';
 import {estimateSwapGasLimit} from './handlers';
 import { Contract } from '@ethersproject/contracts';
 import {add} from './utilities';
-import {ethUnits, UNISWAP_V2_ROUTER_ADDRESS} from './index';
+import {ethUnits, erc20ABI, UNISWAP_V2_ROUTER_ADDRESS} from './index';
 import {assetNeedsUnlocking} from './unlock';
 import { web3Provider } from './web3'
-import erc20ABI from './erc20-abi.json'
 import unlock from './unlock'
 import swap from './swap'
 

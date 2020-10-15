@@ -25,8 +25,8 @@ import useSwapInputRefs from './uniswap/hooks/useSwapInputRefs'
 import { createUnlockAndSwapRap, executeRap } from './uniswap/raps'
 import { web3Provider } from './uniswap/web3'
 import { values } from "lodash-es";
-import {calculateTradeDetails} from './uniswap/handlers'
-import {updatePrecisionToDisplay,isZero,convertStringToNumber} from './uniswap/utilities'
+import { calculateTradeDetails } from './uniswap/handlers'
+import { updatePrecisionToDisplay, isZero, convertStringToNumber } from './uniswap/utilities'
 
 const Input = React.forwardRef((props, ref) => {
   return (
@@ -72,12 +72,12 @@ export default function App(props) {
     "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xc778417E063141139Fce010982780140Aa0cD5Ab/logo.png"
   }
   const outputCurrency = {
-      "name": "Dai Stablecoin",
-      "address": "0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735",
-      "symbol": "DAI",
-      "decimals": 18,
-      "chainId": 4,
-      "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735/logo.png"
+    "name": "Dai Stablecoin",
+    "address": "0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735",
+    "symbol": "DAI",
+    "decimals": 18,
+    "chainId": 4,
+    "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735/logo.png"
   }
 
   const {
@@ -143,50 +143,49 @@ export default function App(props) {
     chainId: wallet.chainId,
   });
   */
- const isSufficientLiquidity = true;
- const { allPairs } = useUniswapPairs(
-  inputCurrency,
-  outputCurrency,
-  wallet.provider,
-  wallet.chainId
-);
- const tradeDetails = calculateTradeDetails(wallet.chainId,inputAmount,outputAmount,inputCurrency,outputCurrency, allPairs, false)
- const calculateOutputGivenInputChange = useCallback(
-  ({ isInputEmpty, isInputZero }) => {
-    if (
-      (isInputEmpty || isInputZero) &&
-      outputFieldRef &&
-      outputFieldRef.current &&
-      !outputFieldRef.current.isFocused()
-    ) {
-      updateOutputAmount(null, null, true);
-    } else {
-      const rawUpdatedOutputAmount = tradeDetails?.outputAmount?.toExact();
-      if (!isZero(rawUpdatedOutputAmount)) {
-        const { outputPriceValue } = tradeDetails;
-        const updatedOutputAmountDisplay = updatePrecisionToDisplay(
-          rawUpdatedOutputAmount,
-          outputPriceValue
-        );
+  const isSufficientLiquidity = true;
+  const { allPairs } = useUniswapPairs(
+    inputCurrency,
+    outputCurrency,
+    wallet.provider,
+    wallet.chainId
+  );
+  const tradeDetails = calculateTradeDetails(wallet.chainId, inputAmount, outputAmount, inputCurrency, outputCurrency, allPairs, false)
+  const calculateOutputGivenInputChange = useCallback(
+    ({ isInputEmpty, isInputZero }) => {
+      if (
+        (isInputEmpty || isInputZero) &&
+        outputFieldRef &&
+        outputFieldRef.current &&
+        !outputFieldRef.current.isFocused()
+      ) {
+        updateOutputAmount(null, null, true);
+      } else {
+        const rawUpdatedOutputAmount = tradeDetails?.outputAmount?.toExact();
+        if (!isZero(rawUpdatedOutputAmount)) {
+          const { outputPriceValue } = tradeDetails;
+          const updatedOutputAmountDisplay = updatePrecisionToDisplay(
+            rawUpdatedOutputAmount,
+            outputPriceValue
+          );
 
-        updateOutputAmount(
-          rawUpdatedOutputAmount,
-          updatedOutputAmountDisplay,
-          inputAsExactAmount
-        );
+          updateOutputAmount(
+            rawUpdatedOutputAmount,
+            updatedOutputAmountDisplay,
+            inputAsExactAmount
+          );
+        }
       }
-    }
-  },
-  [
-    extraTradeDetails,
-    inputAsExactAmount,
-    outputFieldRef,
-    tradeDetails,
-    updateOutputAmount,
-  ]
-);
+    },
+    [
+      extraTradeDetails,
+      inputAsExactAmount,
+      outputFieldRef,
+      tradeDetails,
+      updateOutputAmount,
+    ]
+  );
 
-  console.log("trade", tradeDetails)
   const handleSubmit = useCallback(() => {
     const fn = async () => {
       setIsAuthorizing(true);
@@ -195,6 +194,7 @@ export default function App(props) {
           setIsAuthorizing(false);
           return;
         }
+        console.log("trade", tradeDetails)
 
         const rap = await createUnlockAndSwapRap({
           callback: console.log,
@@ -207,7 +207,9 @@ export default function App(props) {
           settings,
           setRap,
         });
+
         console.log(rap)
+
         await executeRap(wallet, setRap, rap);
         setIsAuthorizing(false);
       } catch (error) {
@@ -227,25 +229,24 @@ export default function App(props) {
   ]);
   return (
     <View style={{ flex: 1, paddingVertical: 40 }}>
-      <View style={styles.container}>
-        <View style={styles.welcome}>
-          <View>
-            <Text>Logo</Text>
-          </View>
-          <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-            <View>
-              <Text>Ether</Text>
-            </View>
-            <View>
-              <Text>Status Token</Text>
-            </View>
-          </View>
-        </View>
-      </View>
-      <View style={styles.container}>
-        <View style={styles.welcome}>
-          <View>
-            <Text>Logo</Text>
+      
+      <View style={{
+        flex: 1,
+        padding: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#F5FCFF',
+        flexDirection: 'row'
+      }}>
+        <View style={{
+          flex: 1,
+          paddingHorizontal: 16,
+          paddingVertical: 8,
+          backgroundColor: 'rgba(255, 0, 122, 0.1)',
+          borderRadius: 24,
+        }}>
+          <View style={{ padding: 8 }}>
+            <Text style={{ fontSize: 18 }}>🦄 Uniswap</Text>
           </View>
           <View>
             <Input label="From" ref={inputFieldRef} token={inputCurrency} value={inputAmount} onChange={updateInputAmount} />
@@ -257,26 +258,3 @@ export default function App(props) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-    flexDirection: 'row'
-  },
-  welcome: {
-    flex: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    backgroundColor: 'rgba(255, 0, 122, 0.1)',
-    borderRadius: 24,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
