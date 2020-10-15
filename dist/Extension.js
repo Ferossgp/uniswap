@@ -3,7 +3,7 @@ import "@ethersproject/shims";
 ``;
 import { Text, View } from 'react-native';
 import App from './App';
-import { setWeb3Provider } from './uniswap/web3';
+import { setWeb3Provider, setAccount } from './uniswap/web3';
 import { Web3Provider } from '@ethersproject/providers';
 let statusAPI;
 function Init(api) {
