@@ -2,11 +2,12 @@
   "name": "UniswapStatus",
   "version": "0.0.1",
   "private": true,
-  "main": "Extension.js",
+  "main": "dist/Extension.js",
   "scripts": {
     "postinstall": "patch-package",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
+    "build": "npx tsc Extension.tsx --jsx react-native --resolveJsonModule --outDir dist",
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint ."

@@ -2,6 +2,7 @@
 exports.__esModule = true;
 var react_1 = require("react");
 var react_native_1 = require("react-native");
+require("@ethersproject/shims");
 var App_1 = require("./App");
 var web3_1 = require("./uniswap/web3");
 var providers_1 = require("@ethersproject/providers");
@@ -11,7 +12,7 @@ function Init(api) {
     statusAPI.ethereum.request({ method: "eth_requestAccounts" }).then(function (res) {
         setAccount(res[0]);
     });
-    web3_1.setWeb3Provider(providers_1.Web3Provider(statusAPI.ethereum));
+    web3_1.setWeb3Provider(new providers_1.Web3Provider(statusAPI.ethereum));
 }
 function WidgetView(props) {
     return (<react_native_1.View style={{

@@ -149,7 +149,7 @@ exports.executeRap = function (wallet, updateRap, rap) { return __awaiter(void 0
     });
 }); };
 exports.estimateUnlockAndSwap = function (_a) {
-    var inputAmount = _a.inputAmount, inputCurrency = _a.inputCurrency, outputAmount = _a.outputAmount, outputCurrency = _a.outputCurrency, tradeDetails = _a.tradeDetails, settings = _a.settings;
+    var inputAmount = _a.inputAmount, inputCurrency = _a.inputCurrency, outputAmount = _a.outputAmount, outputCurrency = _a.outputCurrency, tradeDetails = _a.tradeDetails, wallet = _a.wallet;
     return __awaiter(void 0, void 0, void 0, function () {
         var isValid, accountAddress, chainId, gasLimits, swapAssetNeedsUnlocking, unlockGasLimit, swapGasLimit;
         return __generator(this, function (_b) {
@@ -162,7 +162,7 @@ exports.estimateUnlockAndSwap = function (_a) {
                     isValid = true;
                     if (!isValid)
                         return [2 /*return*/, index_1.ethUnits.basic_swap];
-                    accountAddress = settings.accountAddress, chainId = settings.chainId;
+                    accountAddress = wallet.accountAddress, chainId = wallet.chainId;
                     gasLimits = [];
                     return [4 /*yield*/, unlock_1.assetNeedsUnlocking(accountAddress, inputAmount, inputCurrency, index_1.UNISWAP_V2_ROUTER_ADDRESS)];
                 case 1:

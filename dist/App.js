@@ -36,11 +36,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- */
-require("@ethersproject/shims");
 var react_1 = require("react");
 var react_native_1 = require("react-native");
 var useUniswapPairs_1 = require("./uniswap/hooks/useUniswapPairs");

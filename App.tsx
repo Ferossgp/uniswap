@@ -1,15 +1,5 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- */
-import "@ethersproject/shims"
-
-import { ChainId } from '@uniswap/sdk';
 import React, { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Component } from 'react';
 import {
-  Platform,
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
@@ -19,13 +9,11 @@ import {
 } from 'react-native';
 import useUniswapPairs from './uniswap/hooks/useUniswapPairs';
 import useSwapInputs from './uniswap/hooks/useSwapInputs'
-import useUniswapMarketDetails from './uniswap/hooks/useUniswapMarketDetails'
 import useSwapInputRefs from './uniswap/hooks/useSwapInputRefs'
 import { createUnlockAndSwapRap, executeRap } from './uniswap/raps'
 import { wallet } from './uniswap/web3'
-import { values } from "lodash-es";
 import { calculateTradeDetails } from './uniswap/handlers'
-import { updatePrecisionToDisplay, isZero, convertStringToNumber } from './uniswap/utilities'
+import { updatePrecisionToDisplay, isZero } from './uniswap/utilities'
 
 const Input = React.forwardRef((props, ref) => {
   return (
